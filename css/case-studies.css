@@ -1,0 +1,69 @@
+/* Shared styles scoped to the new case studies and portfolio cards. */
+.case-study { color: #41474b; }
+.case-study a:focus-visible, .case-card:focus-visible { outline: 3px solid #276c78; outline-offset: 5px; }
+.case-skip { position: absolute; left: 16px; top: -100px; z-index: 10000; background: white; padding: 12px; }
+.case-skip:focus { top: 16px; }
+.case-hero { max-width: 780px; margin: 0 auto 48px; text-align: center; }
+.case-eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: 14px; color: #526c74; }
+.case-hero h1 { font-size: clamp(32px, 4vw, 46px); line-height: 1.18; margin: 12px 0 24px; }
+.case-lead { font-size: 23px; line-height: 1.6; }
+.case-source { display: inline-block; border-bottom: 1px solid currentColor; margin-top: 8px; }
+.case-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; padding: 28px; background: #f3f6f5; border-top: 2px solid #668f92; margin-bottom: 24px; }
+.case-summary dt { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: #526c74; margin-bottom: 8px; }
+.case-summary dd { margin: 0; font-size: 19px; line-height: 1.45; }
+.case-toc { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 28px; padding: 12px 0 32px; border-bottom: 1px solid #e2e7e6; }
+.case-content { max-width: 900px; margin: auto; font-size: 19px; line-height: 1.7; }
+.case-section { padding-top: 62px; scroll-margin-top: 30px; }
+.case-section > h2 { font-size: 32px; margin: 0 0 24px; }
+.case-section h3 { font-size: 25px; line-height: 1.3; }
+.case-section p { margin-bottom: 22px; }
+.case-step { display: grid; grid-template-columns: 48px 1fr; gap: 22px; padding: 22px 0 4px; border-top: 1px solid #e2e7e6; }
+.step-number { color: #668f92; font-size: 30px; line-height: 1.3; }
+.case-step h3 { margin-top: 0; }
+.architecture { background: #f4f7f6; border: 1px solid #dce5e2; padding: 28px; margin: 32px 0; border-radius: 4px; }
+.case-study .probootstrap-section figure.architecture figcaption { font-size: 24px; line-height: 1.4; color: #243d45; font-style: normal; padding: 0; margin: 0 0 26px; text-shadow: none; }
+.flow-group h3 { font-size: 17px; color: #526c74; margin: 0 0 14px; }
+.flow { display: flex; gap: 26px; list-style: none; padding: 0; margin: 0; }
+.flow li { position: relative; flex: 1; min-width: 0; padding: 16px 12px; background: #fff; border: 1px solid #b9ceca; border-top: 3px solid #668f92; border-radius: 3px; }
+.flow li + li::before { content: '→'; position: absolute; left: -24px; top: 40%; color: #426972; font: 20px Arial, sans-serif; }
+.flow strong, .flow span, .loop-exits strong, .loop-exits span { display: block; }
+.flow strong { font-size: 18px; line-height: 1.25; margin-bottom: 10px; color: #243d45; }
+.flow span, .loop-exits span { font-size: 16px; line-height: 1.5; }
+.flow-bridge { text-align: center; padding: 22px 0; font-size: 16px; color: #426972; }
+.flow-return { border: 1px dashed #668f92; border-left: 4px solid #668f92; padding: 14px 18px; margin-top: 20px; color: #365c63; font-size: 17px; line-height: 1.5; }
+.loop-exits { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.loop-exits > div { background: #e8efed; padding: 16px; }
+.loop-exits strong { font-size: 18px; margin-bottom: 8px; }
+.architecture .diagram-note { font-size: 16px; line-height: 1.6; margin: 22px 0 0; }
+.case-table-wrap { overflow-x: auto; }
+.case-table { width: 100%; border-collapse: collapse; font-size: 18px; }
+.case-table caption { font-size: 16px; color: #526c74; padding: 0 0 12px; }
+.case-table td, .case-table th { padding: 14px 16px; border-bottom: 1px solid #dce5e2; text-align: left; }
+.case-table thead { background: #edf3f1; }
+.case-table tbody th { font-weight: normal; }
+.case-small { font-size: 16px; line-height: 1.65; margin-top: 18px; }
+.tool-list > div { padding: 16px 0; border-bottom: 1px solid #e2e7e6; }
+.tool-list dd { margin: 8px 0 0; font-size: 18px; }
+.case-content code { font-size: .78em; color: #365c63; background: #edf3f1; overflow-wrap: anywhere; }
+.case-next { display: flex; justify-content: space-between; gap: 24px; border-top: 1px solid #dce5e2; margin-top: 50px; padding-top: 28px; }
+.case-card .probootstrap-photo-details p { color: #fff; }
+.case-card .probootstrap-photo-details h2 { max-width: 440px; }
+@media (max-width: 767px) {
+  .case-summary { grid-template-columns: 1fr; gap: 22px; padding: 24px; }
+  .case-hero { margin-bottom: 32px; }
+  .case-lead { font-size: 21px; }
+  .case-section { padding-top: 42px; }
+  .case-step { grid-template-columns: 34px 1fr; gap: 12px; }
+  .architecture { padding: 20px 16px; }
+  .flow { flex-direction: column; gap: 25px; }
+  .flow li + li::before { content: '↓'; left: 50%; top: -25px; }
+  .flow li { padding: 15px; }
+  .loop-exits { grid-template-columns: 1fr; }
+  .case-next { flex-direction: column; }
+  .case-table td, .case-table th { padding: 12px 8px; }
+}
+@media print {
+  .probootstrap-header, .probootstrap-footer, .case-toc, .case-next, .case-skip { display: none; }
+  .case-section { padding-top: 24px; }
+  .architecture, .case-step { break-inside: avoid; }
+}

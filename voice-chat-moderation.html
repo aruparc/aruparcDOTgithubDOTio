@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voice Chat Moderator: Helping Moderators Focus | Arup Arcalgud</title>
+  <meta name="description" content="A voice moderation case study covering clip transcription, a bounded tool-calling agent, session memory, and a persistent human review workflow.">
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/case-studies.css">
+  <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+</head>
+<body class="case-study">
+<a class="case-skip" href="#case-content">Skip to case study</a>
+<header role="banner" class="probootstrap-header">
+    <div class="container">
+        <a href="index.html" class="probootstrap-logo">Arup Arcalgud<span>.</span></a>
+        
+        <a href="#" class="probootstrap-burger-menu visible-xs" ><i>Menu</i></a>
+        <div class="mobile-menu-overlay"></div>
+
+        <nav role="navigation" class="probootstrap-nav hidden-xs">
+          <ul class="probootstrap-main-nav">
+            <li class="active"><a href="index.html">Portfolio</a></li>
+            <li><a href="services.html">Education</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="resume.html">Resume</a></li>
+
+          </ul>
+        </nav>
+    </div>
+  </header>
+<main id="case-content" class="probootstrap-section">
+  <div class="container">
+    <div class="case-hero">
+      <p class="case-eyebrow">Project case study</p>
+      <h1>Voice Chat Moderator: Helping Moderators Focus</h1>
+      <p class="case-lead">A moderation team needs to identify harmful speech without losing the context of a conversation. I built this prototype to explore how audio clips could become reviewable recommendations, with uncertain cases handed to a person.</p>
+      <a class="case-source" href="https://github.com/aruparc/VoiceChatModerationAgent">View the project on GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+    <dl class="case-summary">
+      <div><dt>Who it could help</dt><dd>Community and trust-and-safety teams reviewing voice chat</dd></div>
+      <div><dt>Business goal</dt><dd>Support triage with context, evidence, and a clear review handoff</dd></div>
+      <div><dt>Current scope</dt><dd>Clip-based proof of concept · recommendations and human review</dd></div>
+    </dl>
+    <nav class="case-toc" aria-label="Case study sections"><a href="#problem">The problem</a><a href="#progression">Simple to complex</a><a href="#design">System design</a><a href="#results">Results &amp; lessons</a></nav>
+    <article class="case-content">
+      <section id="problem" class="case-section"><h2>The Problem &amp; Project Goals</h2>
+    <p>Voice conversations are difficult to review because the words alone may not tell the whole story. A phrase can be gameplay banter, a quotation, or a targeted threat depending on the surrounding conversation. A useful assistant needs a way to look for that context and recognize when it still does not have enough information.</p>
+    <p>My goal was to connect audio input to a moderation recommendation that someone could inspect. For a community team, the intended value is less effort assembling evidence and a clearer path for reviewing uncertain cases. This is a prototype of that workflow; reduced review time and moderation accuracy still need to be measured.</p></section><section id="progression" class="case-section"><h2>From Audio Processing to an Agent</h2>
+    <p>There are four layers to the current design. They show how a straightforward audio pipeline becomes a system that can gather evidence and support a human decision.</p>
+    <div class="case-step"><span class="step-number" aria-hidden="true">01</span><div><h3>Make speech readable</h3><p>The simplest layer accepts a recording or upload, normalizes its audio format, and sends it to the backend. FastAPI waits for the completed clip and selects either local Whisper transcription or the Gemini Live transcription path. Keeping that transport predictable gives the moderation layer a consistent text input.</p></div></div>
+    <div class="case-step"><span class="step-number" aria-hidden="true">02</span><div><h3>Produce a structured recommendation</h3><p>The next layer asks a moderation model to choose allow, flag, or escalate. The result includes categories, confidence, an explanation, and quoted evidence where applicable. Runtime validation requires a policy category and observed evidence before accepting a flag. A quote match helps prevent invented evidence, but does not prove that the interpretation is correct.</p></div></div>
+    <div class="case-step"><span class="step-number" aria-hidden="true">03</span><div><h3>Let the model gather context</h3><p>A more complex case may need earlier speech or a closer look at policy. The model can select tools, receive their results, and reconsider its next action. It does not have to follow a fixed sequence of lookups. The same loop works with Ollama or Gemini, independently of the transcription provider.</p></div></div>
+    <div class="case-step"><span class="step-number" aria-hidden="true">04</span><div><h3>Keep a record and involve a person</h3><p>SQLite stores clips, recommendations, tool observations, and review cases. Escalations appear in a session review queue where a person can record a decision and note. That resolution is kept separately from the original recommendation, preserving what the agent suggested and what the reviewer decided.</p></div></div></section><section id="design" class="case-section"><h2>How the System Is Orchestrated</h2>
+    <p>I separated audio orchestration from moderation decisions. The orchestrator handles the path from bytes to a transcript. The moderation agent then chooses what information it needs before finishing with a recommendation or a review request.</p>
+    <figure class="architecture" aria-labelledby="audio-architecture"><figcaption id="audio-architecture">System design · From a completed clip to a reviewable recommendation</figcaption><div class="flow-group"><h3>Audio transport and transcription</h3><ol class="flow"><li><strong>Record or upload</strong><span>Streamlit accepts a completed audio clip</span></li><li><strong>Normalize & send</strong><span>Mono 16 kHz PCM16 · 100 ms chunks over WebSocket</span></li><li><strong>Buffer & orchestrate</strong><span>FastAPI /ws/audio · process after the end message</span></li><li><strong>Transcribe</strong><span>Local faster-whisper OR Google Gemini Live</span></li></ol></div><div class="flow-bridge">Transcript + session ID + player ID ↓</div><div class="flow-group"><h3>Moderation and human review</h3><ol class="flow"><li><strong>Choose & use tools</strong><span>Ollama OR Gemini moderator · shared agent loop</span></li><li><strong>Persist the result</strong><span>SQLite · transcript, recommendation, tool observations</span></li><li><strong>Return to the UI</strong><span>Allow / flag / escalate + explanation + tool trace</span></li><li><strong>Review escalations</strong><span>Human decision and note saved separately in SQLite</span></li></ol></div><p class="diagram-note">Transcription and moderation providers are selected independently. Audio arrives in chunks, but this app processes completed clips; it does not continuously moderate a live game.</p></figure>
+    <p>The frontend and backend have separate Docker images. Compose keeps the API on its internal network and persists the moderation database and Whisper model cache in named volumes. This makes the prototype easier to run repeatedly without treating each launch as a fresh session.</p>
+    <figure class="architecture" aria-labelledby="agent-loop"><figcaption id="agent-loop">Agent loop · Choose a tool, observe, and reassess</figcaption><div class="flow-group"><h3>Begin with the current transcript and moderation instructions</h3><ol class="flow"><li><strong>Model selects a tool</strong><span>A clear case can go directly to a final recommendation</span></li><li><strong>Runtime validates & executes</strong><span>Check tool name, arguments, session scope, and quoted evidence</span></li><li><strong>Observe the result</strong><span>Read policy or context, or receive an actionable tool error</span></li></ol></div><div class="flow-return">↶ If no valid final decision exists, return observations to the model and choose the next step.</div><div class="loop-exits"><div><strong>Valid terminal tool</strong><span>record_moderation_event OR request_human_review → persist recommendation and any review entry → stop</span></div><div><strong>Execution budget exhausted</strong><span>8 model turns / 24 tool executions / 120 seconds → persist escalation and human review entry → stop</span></div></div><p class="diagram-note">Empty transcripts skip the model. Provider or network failures surface as processing errors. The limits bound agent execution, not the entire audio-processing request.</p></figure>
+    <h3>What the agent can actually do</h3>
+    <dl class="tool-list">
+      <div><dt><code>lookup_moderation_policy</code></dt><dd>Retrieve guidance for one category or all categories, such as harassment, threats, or disclosure of personal information.</dd></div>
+      <div><dt><code>get_recent_player_context</code></dt><dd>Read up to 20 earlier clips in the current session, optionally narrowed to a speaker. The current clip is excluded.</dd></div>
+      <div><dt><code>get_session_behavior</code></dt><dd>Inspect a player's last 100 recommendations in this session. Previous recommendations are not confirmed violations.</dd></div>
+      <div><dt><code>record_moderation_event</code></dt><dd>Finish with a validated allow, flag, or escalate recommendation. An escalation also creates a review entry.</dd></div>
+      <div><dt><code>request_human_review</code></dt><dd>Finish by queuing an uncertain or urgent case for a person.</dd></div>
+    </dl>
+    <p>For example, an ambiguous gameplay phrase could lead the model to retrieve earlier clips, consult the threats policy, and then decide whether to allow it or request review. That is an illustrative path, not a guaranteed sequence or a measured test result. The model can also finish a clear case immediately.</p></section><section id="results" class="case-section"><h2>Results &amp; What I Learned</h2>
+    <p>The implemented result is a connected workflow: submit a clip, transcribe it, run a bounded moderation loop, inspect the tool trace, and resolve an escalation through the review queue. The repository supports those capabilities, but does not provide an accuracy benchmark or evidence of reduced moderator workload.</p>
+    <p>The key design lesson for me is that a moderation assistant needs a defined way to stop. Invalid tool arguments become observations the model can correct. A valid terminal tool ends the loop. If the agent reaches its turn, tool, or time budget, the system creates a human review case. This makes unresolved decisions visible instead of leaving the workflow open-ended.</p>
+    <h3>Where the prototype stops</h3>
+    <p>The app recommends actions; it does not mute or ban players. Its context comes from submitted clips in the same session, with no live game telemetry. Review endpoints have no reviewer authentication, and session IDs organize records rather than authorize access. These constraints matter before moving from a local demonstration to a shared service.</p>
+    <h3>What I would evaluate next</h3>
+    <p>I would build a labeled set of clips covering clear violations, ordinary banter, quoted speech, and missing context. I would measure false positives, missed violations, escalation frequency, and end-to-end latency, then compare the local and hosted provider paths. Reviewer agreement and time per case would help determine whether the extra orchestration actually makes moderation work easier.</p>
+    <p>Before a shared pilot, I would also add reviewer authentication, define transcript retention, and evaluate simultaneous sessions. Continuous audio ingestion would be a separate extension of the current completed-clip workflow.</p>
+    <p class="case-small">Implementation: <a href="https://github.com/aruparc/VoiceChatModerationAgent/blob/main/backend/orchestrator.py">audio orchestrator</a>, <a href="https://github.com/aruparc/VoiceChatModerationAgent/blob/main/backend/moderation/agent.py">bounded agent loop</a>, <a href="https://github.com/aruparc/VoiceChatModerationAgent/blob/main/backend/moderation/tools.py">validated tools</a>, and <a href="https://github.com/aruparc/VoiceChatModerationAgent/blob/main/README.md">workflow documentation</a>.</p></section>
+      <div class="case-next"><a href="index.html">← Back to portfolio</a><a href="pdf-text-rag.html">Explore document question answering →</a></div>
+    </article>
+  </div>
+</main>
+<footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p class="probootstrap-copyright" style="font-size: 10px">&copy; Adapted from <a href="https://uicookies.com/" target="blank">uiCookies:Explorer</a> All Rights Reserved.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.linkedin.com/in/arup-arcalgud-577659110/" target="_blank"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/aruparc" target="_blank"><i class="icon-github"></i></a></li>
+            <!-- <li><a href="#"><i class="icon-instagram2"></i></a></li> -->
+            <!-- <li><a href="#"><i class="icon-google-plus"></i></a></li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+<script src="js/scripts.min.js"></script>
+<script src="js/main.min.js"></script>
+<script src="js/custom.js"></script>
+</body>
+</html>
