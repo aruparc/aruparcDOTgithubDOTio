@@ -67,3 +67,12 @@
   .case-section { padding-top: 24px; }
   .architecture, .case-step { break-inside: avoid; }
 }
+
+/* Portfolio project categories */
+.portfolio-group-heading { max-width: 680px; margin: 0 auto 32px; }
+.portfolio-group-heading h2 { margin: 0 0 12px; font-size: 32px; }
+.portfolio-group-heading p { margin: 0; }
+.portfolio-archive { margin-top: 88px; padding-top: 56px; border-top: 1px solid #dce5e2; }
+@media (max-width: 767px) {
+  .portfolio-archive { margin-top: 56px; padding-top: 36px; }
+}

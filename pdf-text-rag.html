@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PDF-Text RAG: Making Documents Easier to Use | Arup Arcalgud</title>
+  <title>Document Chat: Simplifying Dense Documents by Leveraging RAG | Arup Arcalgud</title>
   <meta name="description" content="A local document question-answering prototype: from text extraction and semantic search to conversational answers, with architecture and measured timing results.">
   <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
   <link rel="stylesheet" href="css/styles-merged.css">
@@ -35,30 +35,47 @@
   </header>
 <main id="case-content" class="probootstrap-section">
   <div class="container">
-    <div class="case-hero">
-      <p class="case-eyebrow">Project case study</p>
-      <h1>PDF-Text RAG: Making Documents Easier to Use</h1>
-      <p class="case-lead">Finding an answer in a long document can take longer than acting on it. I built this project to explore how a team could spend less time searching through files and more time using the information inside them.</p>
+  
+    <div class="col-md-6 col-md-offset-3 mb80 text-center probootstrap-animate">
+      <h2>Document Chat: Simplifying Dense Documents by Leveraging RAG</h2>
+      <p></p>
+      <p>
+        Finding an answer in a long document can take longer than acting on it. 
+        This project explores how a team could spend less time manually searching through files and more time using the information inside them.
+      </p>    
       <a class="case-source" href="https://github.com/aruparc/PDF-Text-RAG">View the project on GitHub <span aria-hidden="true">↗</span></a>
     </div>
+  </div>
+  
+    <!-- <div class="case-hero">
+      <h2>Document Chat: Simplifying Dense Documents by Leveraging RAG</h2>
+      <p>
+        Finding an answer in a long document can take longer than acting on it. 
+        This project explores how a team could spend less time manually searching through files and more time using the information inside them.
+      </p>        
+      <a class="case-source" href="https://github.com/aruparc/PDF-Text-RAG">View the project on GitHub <span aria-hidden="true">↗</span></a>
+    </div> -->
     <dl class="case-summary">
       <div><dt>Who it could help</dt><dd>Teams working with manuals, reports, and reference documents</dd></div>
-      <div><dt>Business goal</dt><dd>Reduce the effort of finding and understanding document information</dd></div>
-      <div><dt>Current scope</dt><dd>Local prototype · single-file uploads · conversational retrieval</dd></div>
+      <div><dt>Business goal</dt><dd>Reduce the effort of finding and understanding document information, while maintaining document ownership and data privacy.</dd></div>
+      <div><dt>Current scope</dt><dd>Self-hostable service · Multi-file uploads · Conversational information retrieval</dd></div>
     </dl>
-    <nav class="case-toc" aria-label="Case study sections"><a href="#problem">The problem</a><a href="#progression">Simple to complex</a><a href="#design">System design</a><a href="#results">Results &amp; lessons</a></nav>
+    <nav class="case-toc" aria-label="Case study sections"><a href="#problem">The Problem</a><a href="#progression">The User Experience</a><a href="#design">System design</a><a href="#results">Evaluation Results</a><a href="#scaling">Scaling Beyond</a></nav>
     <article class="case-content">
-      <section id="problem" class="case-section"><h2>The Problem &amp; Project Goals</h2>
-    <p>A document can contain exactly what someone needs and still be difficult to use. A keyword search helps when the reader already knows the right words, but a question often uses different language from the source. For a support or operations team, that creates extra work every time someone has to locate and interpret the same information.</p>
-    <p>The goal of this little project was to make that interaction simpler: upload a document, ask a question in everyday language, and ask follow-up questions without starting over. I wanted to understand the complete path from a raw file to a useful answer, while keeping document processing and model inference local.</p>
-    <p>The business value here is a hypothesis to test: easier access to internal knowledge could reduce lookup time. This repository demonstrates the workflow; it does not establish time savings for a deployed team.</p></section><section id="progression" class="case-section"><h2>From a File Upload to a Conversation</h2>
+    <section id="problem" class="case-section"><h2>The Problem</h2>
+    <p>A collection of documents can contain exactly what someone needs and still be tedious to navigate. A keyword search helps when the reader already knows the right words, but often still requires some manual sifting of information in the source document(s). For a support or operations team, that perpetuates manual work every time someone has to locate and interpret information in a bulk of documents.</p>
+    <p>The goal of this project was to make that interaction simpler: upload one or more documents, ask questions in everyday language, receive accurate information, and ask follow-up questions without starting over.</p>
+    <p><b>Why not use just ChatGPT, Gemini, or Claude etc.?</b> The business value here is two fold: freedom to customize the user experience, and data privacy. Many times, teams and organizations will work with documents and data that should not be exposed to external providers. By self-hosting and owning the RAG platform, they protect their data, information, and freedom to customize the experience with UI and model changes.</p>
+    </section>
+    <section id="progression" class="case-section"><h2>The User Experience: From File Upload to a Conversation</h2>
     <p>The system is easiest to understand in three layers. Each layer adds a capability that the previous one cannot provide on its own.</p>
-    <div class="case-step"><span class="step-number" aria-hidden="true">01</span><div><h3>Start with readable text</h3><p>Before asking a model anything, I needed to get usable text out of the file. The app accepts one PDF, DOCX, or TXT file at a time, extracts its text, and previews the first few chunks. An explicit indexing button separates this work from ordinary chat interactions, so a Streamlit rerun does not automatically repeat the entire indexing process.</p></div></div>
-    <div class="case-step"><span class="step-number" aria-hidden="true">02</span><div><h3>Find related passages</h3><p>Next, I split the text into 500-character chunks with a 50-character overlap. The overlap helps preserve context across boundaries. An embedding model converts those chunks into vectors, which Chroma stores alongside the original text, filename, document ID, and chunk index. A question goes through the same embedding model so the app can retrieve five related passages.</p></div></div>
-    <div class="case-step"><span class="step-number" aria-hidden="true">03</span><div><h3>Add follow-up questions</h3><p>Finally, I pass the retrieved passages and up to four recent conversation turns to the local language model. The prompt tells it to use document context as evidence, use chat history to understand references, and acknowledge when an answer cannot be determined. The answer is displayed and saved for the next turn. These instructions guide the model, but do not guarantee that every answer is grounded.</p></div></div>
-    <p>A separate multi-document uploader sandbox explores accepting up to three files. It currently reads uploads and displays their details; batch indexing is a future integration step.</p></section><section id="design" class="case-section"><h2>How the Pieces Work Together</h2>
-    <p>I separated document indexing from question answering because they happen at different times. Indexing prepares reusable evidence. Each question then performs a smaller retrieval step before asking the model to explain what it found.</p>
-    <figure class="architecture" aria-labelledby="rag-architecture"><figcaption id="rag-architecture">System design · Two paths, one document collection</figcaption><div class="flow-group"><h3>1 / Index when the user clicks the indexing button</h3><ol class="flow"><li><strong>Upload a document</strong><span>Streamlit · PDF, DOCX, or TXT</span></li><li><strong>Extract & split</strong><span>pypdf / docx2txt / UTF-8 → 500-character chunks, 50-character overlap</span></li><li><strong>Embed & store</strong><span>Ollama nomic-embed-text → persistent Chroma collection + source metadata</span></li></ol></div><div class="flow-bridge">The stored chunks and vectors become the evidence available to chat ↓</div><div class="flow-group"><h3>2 / Retrieve evidence for each new question</h3><ol class="flow"><li><strong>Embed the question</strong><span>Ollama nomic-embed-text</span></li><li><strong>Retrieve 5 chunks</strong><span>Chroma semantic search across the collection</span></li><li><strong>Build the prompt</strong><span>Retrieved text + up to 4 recent chat turns + current question</span></li><li><strong>Generate an answer</strong><span>llama3.2:3b on Ollama through an OpenAI-compatible client</span></li></ol></div><div class="flow-return">↶ Display and save the answer in Streamlit session history. The next user question starts retrieval again.</div><p class="diagram-note">Streamlit caches the embedding model, Chroma collection, and chat client across reruns. This is a fixed retrieval pipeline: there is no autonomous tool-selection or retry loop.</p></figure>
+    <div class="case-step"><span class="step-number" aria-hidden="true">01</span><div><h3>Upload documents</h3><p>Before asking a model anything, users upload their documents. The app accepts PDF, DOCX, or TXT files, extracts its text, and previews the first few chunks.</p></div></div>
+    <div class="case-step"><span class="step-number" aria-hidden="true">02</span><div><h3>Extract, chunk, vectorize</h3><p>Next, the text is split into 500-character chunks with a 50-character overlap. The overlap helps preserve context across boundaries. An embedding model converts those chunks into vectors, which gets stored locally in ChromaDB alongside the original text, filename, document ID, and chunk index. A user's question goes through the same embedding model so the app can retrieve five related passages.</p></div></div>
+    <div class="case-step"><span class="step-number" aria-hidden="true">03</span><div><h3>Facilitate conversations with appropriate context</h3><p>Retrieved passages and up to four recent conversation turns are passed to the local language model with every new user prompt. The allows the LLM to use document context as evidence, use chat history to understand references, and respond to user requests. Finally, the system will acknowledge when an answer cannot be determined.</p></div></div>
+    </section>
+    <section id="design" class="case-section"><h2>System Design: How the Pieces Work Together</h2>
+    <!-- <p>I separated document indexing from question answering because they happen at different times. Indexing prepares reusable evidence. Each question then performs a smaller retrieval step before asking the model to explain what it found.</p> -->
+    <figure class="architecture" aria-labelledby="rag-architecture"><figcaption id="rag-architecture">Two Processes: Document Indexing & Question Answering</figcaption><div class="flow-group"><h3>1 / Index when the user clicks the indexing button</h3><ol class="flow"><li><strong>Upload a document</strong><span>Streamlit · PDF, DOCX, or TXT</span></li><li><strong>Extract & split</strong><span>pypdf / docx2txt / UTF-8 → 500-character chunks, 50-character overlap</span></li><li><strong>Embed & store</strong><span>Ollama nomic-embed-text → persistent Chroma collection + source metadata</span></li></ol></div><div class="flow-bridge">The stored chunks and vectors become the evidence available to chat ↓</div><div class="flow-group"><h3>2 / Retrieve evidence for each new question</h3><ol class="flow"><li><strong>Embed the question</strong><span>Ollama nomic-embed-text</span></li><li><strong>Retrieve 5 chunks</strong><span>Chroma semantic search across the collection</span></li><li><strong>Build the prompt</strong><span>Retrieved text + up to 4 recent chat turns + current question</span></li><li><strong>Generate an answer</strong><span>llama3.2:3b on Ollama through an OpenAI-compatible client</span></li></ol></div><div class="flow-return">↶ Display and save the answer in Streamlit session history. The next user question starts retrieval again.</div><p class="diagram-note">Streamlit caches the embedding model, Chroma collection, and chat client across reruns. For simplicity, is a fixed retrieval pipeline: no autonomous tool-selection or retry loop.</p></figure>
     <p>Ollama supplies both the <code>nomic-embed-text</code> embeddings and the <code>llama3.2:3b</code> chat model. The chat client uses an OpenAI-compatible interface pointed at localhost. Chroma persists the collection on disk, while the conversation lives in Streamlit session state.</p>
     <p>One useful tradeoff became clear in the implementation: persistence makes earlier uploads available again, but the current query searches the whole collection. There is no selected-document filter or duplicate-upload check. Those controls would matter if a team used this with many documents.</p></section><section id="results" class="case-section"><h2>Results &amp; What I Learned</h2>
     <p>The repository includes a timing log from a Honda Integra document experiment on September 21, 2026. It gives a concrete view of the prototype's latency, although it does not include a scored answer-quality evaluation.</p>
@@ -71,11 +88,14 @@
     </tbody></table></div>
     <p class="case-small">The response timer covers question embedding, retrieval, prompt construction, and generation. These are individual observations, not averages or a production benchmark. The log does not establish answer accuracy or hardware-normalized performance.</p>
     <p>What stood out to me was how little time text splitting took compared with waiting for an answer. A useful document assistant needs to be both grounded and responsive; this experiment identifies response latency as an important area to investigate before claiming a productivity improvement.</p>
-    <h3>What I would build next</h3>
-    <p>I would start with a small set of questions and expected source passages, including questions the documents cannot answer. That would let me measure retrieval quality, answer support, and latency together. I would then expose source citations in the interface, add document filtering and duplicate detection, and connect the multi-file uploader to the indexing pipeline.</p>
-    <p>The current PDF path extracts existing text and has no OCR step for image-only scans. Source metadata is stored, but citations are not displayed with answers. Those are concrete gaps between a useful local experiment and a document tool a team could rely on.</p>
-    <p class="case-small">Implementation and evidence: <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/uploader_rag.py">document pipeline</a>, <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/multi_doc_uploader_sandbox.py">multi-file sandbox</a>, and <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/honda_integra_test_metrics.txt">recorded timing log</a>.</p></section>
-      <div class="case-next"><a href="index.html">← Back to portfolio</a><a href="voice-chat-moderation.html">Explore voice moderation →</a></div>
+
+    <section id="problem" class="case-section"><h2>Scaling Beyond</h2>
+      <p>Some ways to build on top of this current implementation:</p>
+      <div> - Add more LLM options</div>
+      <div> - Add model guardrails, customization options for model hyperparameters (temperature, top-p, top-k, frequency penalty, presence penalty, etc.)</div>
+      <div> - Token usage logging (input and output tokens)</div>
+      <!-- <p class="case-small">Implementation and evidence: <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/uploader_rag.py">document pipeline</a>, <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/multi_doc_uploader_sandbox.py">multi-file sandbox</a>, and <a href="https://github.com/aruparc/PDF-Text-RAG/blob/main/honda_integra_test_metrics.txt">recorded timing log</a>.</p></section> -->
+    <!-- <div class="case-next"><a href="index.html">← Back to portfolio</a><a href="voice-chat-moderation.html">Explore voice moderation →</a></div> -->
     </article>
   </div>
 </main>

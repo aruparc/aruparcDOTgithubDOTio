@@ -50,34 +50,47 @@
   
   <div class="probootstrap-section">
     <div class="container text-center">
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-md-6 col-md-offset-3 mb40">
           <h2>Portfolio</h2>
-          <p>A collection of projects I've tinkered with as I've explored the technology space, from mobile apps 
-            to machine learning, natural language processing, and recommender systems.   
-            </p>    
+          <p>A collection of projects I've tinkered with as I've explored the technology space. My recent work focuses on generative AI, with earlier projects collected in the archive below.</p>
         </div>
-      </div>
+      </div> -->
 
+      <section class="portfolio-group" aria-labelledby="generative-ai-heading" id="generative-ai">
+        <div class="portfolio-group-heading">
+          <h2 id="generative-ai-heading">Generative AI Portfolio</h2>
+          <p>Leveraging large language models to work through recurring problems, help people find answers, and make decisions.</p>
+        </div>
       <div class="row probootstrap-gutter16">
+  
         <div class="col-md-6 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="pdf-text-rag.html" class="img-bg case-card" style="background-image: url(img/case-studies/documents.svg);">
+          <a href="voice-chat-moderation.html" class="img-bg" style="background-image: url(img/voice_chat/voicechat_mod_title_card_dim.jpg);">
             <div class="probootstrap-photo-details">
-              <h2>PDF-Text RAG: Making Documents Easier to Use</h2>
-              <p>Find answers in documents and explore follow-up questions.</p>
+              <h2>Agentic Voice Chat Moderator: Keeping Conversations Safe</h2>
+              <p>Agentic AI, Tool Calling, Human-in-the-Loop</p>
             </div>
           </a>
         </div>
         <div class="col-md-6 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="voice-chat-moderation.html" class="img-bg case-card" style="background-image: url(img/case-studies/moderation.svg);">
+          <a href="pdf-text-rag.html" class="img-bg" style="background-image: url(img/doc_rag/doc_rag_titlecard_dim.jpg);">
             <div class="probootstrap-photo-details">
-              <h2>Voice Chat Moderator: Helping Moderators Focus</h2>
-              <p>Turn voice clips into recommendations and human review cases.</p>
+              <h2>Document Chat: Simplifying Dense Documents by Leveraging RAG</h2>
+              <!-- <p>A RAG system for extracting and communicating information from documents.</p> -->
+               <p>Retrieval-Augmented Generation, Embeddings Generation</p>
             </div>
           </a>
         </div>
+
       </div>
 
+      </section>
+
+      <section class="portfolio-group portfolio-archive" aria-labelledby="archive-heading" id="archive">
+        <div class="portfolio-group-heading">
+          <h2 id="archive-heading">Archive</h2>
+          <p>Earlier explorations in mobile apps, user experience, machine learning, and recommender systems.</p>
+        </div>
       <div class="row probootstrap-gutter16">
         <div class="col-md-6 probootstrap-animate" data-animate-effect="fadeIn">
           <a href="mock_pinterest.html" class="img-bg" style="background-image: url(img/mock_pinterest/cover.PNG);">
@@ -99,7 +112,7 @@
           <a href="https://tylersmith-1234.github.io/toxic-classification" target="_blank" class="img-bg" style="background-image: url(img/comments_classification_cover.JPG);">
             <div class="probootstrap-photo-details">
               <h2>Unsupervised and Supervised Learning: An Exploration into Toxic Comments Classification</h2>
-              <p>Natural Language Processing, Machine Learning</p>
+              <p>Natural Language Processing, Traditional Machine Learning</p>
             </div>
           </a>
         </div>
@@ -150,6 +163,8 @@
           </a>
         </div>
       </div>
+
+      </section>
 
        <!-- <div class="row probootstrap-gutter16">
         <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
